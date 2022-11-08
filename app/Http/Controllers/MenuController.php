@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MenuItem;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
 
 class MenuController extends BaseController
@@ -92,7 +93,17 @@ class MenuController extends BaseController
     ]
      */
 
-    public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+    /**
+     * Here I used custom function in order make tree, because we have to make it in one sql query
+     * but another way of doing this is to use relationship
+     *
+     * @return JsonResponse
+     */
+    public function getMenuItems(): JsonResponse {
+//        Version with eloquent
+//        return response()->json(MenuItem::with('childrenRecursive')->whereNull('parent_id')->get());
+        $menuItems = MenuItem::all()->toArray();
+
+        return response()->json(MenuItem::makeTree($menuItems));
     }
 }
